@@ -6,6 +6,16 @@
 #include <iostream>
 #include <experimental_heuristics.h>
 
+static constexpr float kStepCost[8] = {
+    1.41421356f,  // 0 左上
+    1.0f,         // 1 上
+    1.41421356f,  // 2 右上
+    1.0f,         // 3 左
+    1.0f,         // 4 右
+    1.41421356f,  // 5 左下
+    1.0f,         // 6 下
+    1.41421356f   // 7 右下
+};
 
 const float INF = std::numeric_limits<float>::infinity();
 
@@ -111,7 +121,7 @@ static PyObject *astar(PyObject *self, PyObject *args) {
     for (int i = 0; i < 8; ++i) {
       if (nbrs[i] >= 0) {
         // the sum of the cost so far and the cost of this move
-        float new_cost = costs[cur.idx] + weights[nbrs[i]];
+        float new_cost = costs[cur.idx] + weights[nbrs[i]] * kStepCost[i];
         if (new_cost < costs[nbrs[i]]) {
           // estimate the cost to the goal based on legal moves
           // Get the heuristic method to use
