@@ -1,0 +1,35 @@
+name: Build Win64 CPython 3.13.7 Wheel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13.7
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.7"
+          architecture: "x64"
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel
+
+      - name: Build wheel
+        run: cibuildwheel --platform windows
+        env:
+          CIBW_BUILD: cp313-win_amd64
+          CIBW_SKIP: "*-win32"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyastar2d-win64-cp313
+          path: wheelhouse/*.whl
